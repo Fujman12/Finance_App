@@ -1,0 +1,294 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Finance App</title>
+
+    <style>
+
+    h2 {
+        margin: 25px 25px 15px 0px;
+    }
+
+    h3 {
+        margin: 25px 25px 15px 0px;
+    }
+
+    .msi {
+//        font-size: 70%;
+    }
+
+    .line {
+        display: inline-block;
+        margin: 0 3px 16px 0;
+    }
+
+    </style>
+
+  </head>
+  <body>
+
+
+<div class="container">
+    <h1>Finance App</h1><br>
+
+    <form action="{% url 'input' %}" method="POST" style="margin-bottom: 75px;">
+    {% csrf_token %}
+
+    <h2>Date Assumptions</h2>
+        <div class="row">
+              <div class="form-group col-md-4">
+                <label for="acq_close_input">Acquisition Close Date</label>
+                <input name="acq_close_input" type="text" class="form-control" id="acq_close_input" required placeholder="YYYY-MM-DD">
+              </div>
+
+              <div class="form-group col-md-4">
+                <label for="last_fy_input">Last FY Date</label>
+                <input name="last_fy_input" type="text" class="form-control wm" id="last_fy_input" required placeholder="YYYY-MM-DD">
+              </div>
+
+              <div class="form-group col-md-4">
+                <label for="no_years_input">Number of Years</label>
+                <select name="no_years_input" class="form-control" id="no_years_input" >
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                </select>
+              </div>
+        </div>
+
+        <h2>Valuation Assumptions</h2>
+        <div class="row">
+              <div class="form-group col-md-4">
+                <label for="entry_mult_input">Entry Multiple</label>
+                <input name="entry_mult_input" type="number" step="0.0001" class="form-control" id="entry_mult_input" required>
+              </div>
+
+              <div class="form-group col-md-4">
+                <label for="entry_ebitda">Entry EBITDA</label>
+                <input name="entry_ebitda" type="number" step="0.0001" class="form-control wm" id="entry_ebitda" required>
+              </div>
+
+              <div class="form-group col-md-4">
+                <label for="exit_mult_input">Exit Multiple</label>
+                <input name="exit_mult_input" type="number" step="0.0001" class="form-control wm" id="exit_mult_input" required>
+              </div>
+        </div>
+
+    <h2>Income Statement</h2>
+
+        <!--<h3>Depreciation:</h3>-->
+        <div class="row">
+            <div class="form-group col-md-4">
+              <label for="deprec_perc_rev_input">Depreciation</label>
+              <input name="deprec_perc_rev_input" type="number" step="0.0001" class="form-control wm" id="deprec_perc_rev_input" required>
+            </div>
+        </div>
+
+            <h3>Revenue:</h3>
+            <div id="Revenue" class="DOY ">
+            </div>
+
+            <h3>COGS:</h3>
+            <div id="COGS" class="DOY ">
+            </div>
+
+            <h3>Operating Expenses:</h3>
+            <div id="Operating_Expenses" class="DOY ">
+            </div>
+
+            <h3>Capex:</h3>
+            <div id="Capex" class="DOY ">
+            </div>
+
+
+        <!--<h2>Cash Flow</h2>-->
+        <div class="row">
+              <div class="form-group col-md-4">
+                <label for="changenwc_perc_rev_input">Change NWC</label>
+                <input name="changenwc_perc_rev_input" type="number"  step="0.0001" class="form-control" id="changenwc_perc_rev_input" required>
+              </div>
+        </div>
+
+
+        <h2>Debt Assumptions</h2>
+            <div class="row">
+                  <div class="form-group col-md-4">
+                    <label for="leverage_ebitda">Leverage Multiple</label>
+                    <input name="leverage_ebitda" type="number" step="0.0001" class="form-control" id="leverage_ebitda" required>
+                  </div>
+
+                  <div class="form-group col-md-4">
+                    <label for="interest_rate_input">Interest Rate</label>
+                    <input name="interest_rate_input" type="number" step="0.0001" class="form-control" id="interest_rate_input" required>
+                  </div>
+
+                  <div class="form-group col-md-4">
+                    <label for="start_revolver_input">Revolver Size</label>
+                    <input name="start_revolver_input" type="number" step="0.0001" class="form-control" id="start_revolver_input" required>
+                  </div>
+            </div>
+
+    <h2>Amortisation(%)</h2>
+        <div id="amort_sched_input" class="DOY ">
+        </div>
+
+    <!--<h2>Balance Sheet</h2>-->
+        <div class="row">
+            <div class="form-group col-md-4">
+                <div class="form-group">
+                    <label for="start_cash_input">Start Cash</label>
+                    <input name="start_cash_input" type="number" step="0.0001" class="form-control" id="start_cash_input" required>
+                </div>
+            </div>
+        </div>
+
+
+      <button type="submit" class="btn btn-primary wm">Submit</button>
+    </form>
+
+
+</div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+    <script src="{% static 'cleave.min.js' %}"></script>
+    <script>
+
+
+        var date1 =  new Cleave('#acq_close_input', {
+            date: true,
+            delimiter: '-',
+            datePattern: ['Y', 'm', 'd']
+        });
+
+        var date2 =  new Cleave('#last_fy_input', {
+            date: true,
+            delimiter: '-',
+            datePattern: ['Y', 'm', 'd']
+        });
+
+        var number_of_years = 5;
+
+
+        $('#no_years_input').on('change', function() {
+            $( ".DOY" ).html("");
+            number_of_years = parseInt(this.value);
+            set_number_years_input(number_of_years);
+        });
+
+        set_number_years_input(5);
+        set_default_value();
+
+
+        function set_default_value() {
+            $('#acq_close_input').val('2018-06-30');
+            $('#last_fy_input').val('2018-06-30');
+            $('#no_years_input').val("5");
+
+            $('#entry_mult_input').val(9);
+            $('#entry_ebitda').val(15);
+            $('#exit_mult_input').val(9);
+
+            $('#changenwc_perc_rev_input').val(0.04);
+
+            $('#leverage_ebitda').val(4);
+            $('#interest_rate_input').val(0.045);
+            $('#start_revolver_input').val(75);
+
+            $('#start_cash_input').val(50);
+
+            $('#deprec_perc_rev_input').val(0.04);
+
+            var list_data = {
+                revenue_input: [100.00,120.00,150.00,170.00,200.00],
+                cogs_input: [20.00,22.00,25.00,30.00,32.00],
+                opex_input: [50.00,50.00,60.00,65.00,70.00],
+                capex_input: [20.00,20.00,20.00,20.00,20.00],
+                amort_sched_input: [0.2,0.2,0.2,0.2,0.2],
+            };
+
+            for (i = 1; i<=5; i++)
+            {
+                Object.keys(list_data).forEach(function(element) {
+                var input_id = element + '_year_' + i;
+                    $('#' + input_id).val(list_data[element][i-1]);
+                });
+            };
+        };
+
+
+        function set_number_years_input(n) {
+
+            for (i = 1; i<=n; i++)
+            {
+
+                var revenue = '<div class="form-group line">'+
+                                '<label for="revenue_input_year_' + i + '">Year ' + i +'</label>'+
+                                '<input name="revenue_input_year_' + i + '" type="number" step="0.0001" class="msi form-control" id="revenue_input_year_' + i + '" required>'+
+                               '</div>';
+                var COGS = '<div class="form-group line">'+
+                                '<label for="cogs_input_year_' + i + '">Year ' + i +'</label>'+
+                                '<input name="cogs_input_year_' + i + '" type="number" step="0.0001" class="msi form-control" id="cogs_input_year_' + i + '" required>'+
+                               '</div>';
+                var OperatingExpenses = '<div class="form-group line">'+
+                                '<label for="opex_input_year_' + i + '">Year ' + i +'</label>'+
+                                '<input name="opex_input_year_' + i + '" type="number" step="0.0001" class="msi form-control" id="opex_input_year_' + i + '" required>'+
+                               '</div>';
+                /*var Depreciation = '<div class="form-group line">'+-->
+                                <!--'<label for="Depreciation_year_' + i + '">Year ' + i +'</label>'+-->
+                                <!--'<input name="Depreciation_year_' + i + '" type="number" step="0.0001" class="msi form-control" id="Depreciation_year_' + i + '" required>'+-->
+                               <!--'</div>';*/
+                var Capex = '<div class="form-group line">'+
+                                '<label for="capex_input_year_' + i + '">Year ' + i +'</label>'+
+                                '<input name="capex_input_year_' + i + '" type="number" step="0.0001" class="msi form-control" id="capex_input_year_' + i + '" required>'+
+                               '</div>';
+                var amort_sched_input = '<div class="form-group line">'+
+                                '<label for="amort_sched_input_year_' + i + '">Year ' + i +'</label>'+
+                                '<input name="amort_sched_input_year_' + i + '" type="number" step="0.0001" class="msi form-control" id="amort_sched_input_year_' + i + '" required style="width: ' + year_input_width + 'px;">'+
+                               '</div>';
+
+                $( "#Revenue" ).append( revenue );
+                $( "#COGS" ).append( COGS );
+                $( "#Operating_Expenses" ).append( OperatingExpenses );
+//                $( "#Depreciation" ).append( Depreciation );
+                $( "#Capex" ).append( Capex );
+                $( "#amort_sched_input" ).append( amort_sched_input );
+            }
+        };
+
+
+        var year_input_width = calculate_year_input_width();
+        $(".msi").css("width", year_input_width + "px");
+
+        $( window ).resize(function() {
+            year_input_width = calculate_year_input_width();
+            $(".msi").css("width", year_input_width + "px");
+        });
+
+        function calculate_year_input_width() {
+            var width = $('.container').width();
+            result = Math.round( 0.95 * width / number_of_years );
+            return result;
+        }
+
+    </script>
+
+  </body>
+</html>
