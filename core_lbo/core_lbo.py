@@ -465,8 +465,7 @@ class LBO_Model:
     def show_model(self):
         model_out = self.output_model
 
-        return_mod = model_out.style.apply({'font-weight': 'bold'},
-                                            subset=pd.IndexSlice[model_out.index[model_out.index=='(=)EBITDA'],:])
+        return_mod = model_out.style
         return return_mod
 
     def show_bs_output(self):
