@@ -39,126 +39,151 @@
 
 <div class="container">
     <h1>Finance App</h1><br>
+    <nav id="menu">
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link" id="nav-outputs-tab" data-toggle="tab" href="#nav-outputs" role="tab" aria-controls="nav-outputs" aria-selected="false">Outputs</a>
+        <a class="nav-item nav-link" id="nav-model-tab" data-toggle="tab" href="#nav-model" role="tab" aria-controls="nav-model" aria-selected="false">Model</a>
+        <a class="nav-item nav-link active" id="nav-inputs-tab" data-toggle="tab" href="#nav-inputs" role="tab" aria-controls="nav-inputs" aria-selected="true">Inputs</a>
+      </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade" id="nav-outputs" role="tabpanel" aria-labelledby="nav-outputs-tab">
+            <br><p>Entry price</p>
+            {{show_entry.render|safe}}
 
-    <form action="{% url 'input' %}" method="POST" style="margin-bottom: 75px;">
-    {% csrf_token %}
+            <br><p>Valuation output</p>
+            {{show_val_output.render|safe}}
 
-    <h2>Date Assumptions</h2>
-        <div class="row">
-              <div class="form-group col-md-4">
-                <label for="acq_close_input">Acquisition Close Date</label>
-                <input name="acq_close_input" type="text" class="form-control" id="acq_close_input" required placeholder="YYYY-MM-DD">
-              </div>
+            <br><p>IRR output</p>
+            {{show_irr.render|safe}}
+      </div>
+      <div class="tab-pane fade" id="nav-model" role="tabpanel" aria-labelledby="nav-model-tab">
+            <br><p>Cash flow model</p>
+            {{show_model.render|safe}}
 
-              <div class="form-group col-md-4">
-                <label for="last_fy_input">Last FY Date</label>
-                <input name="last_fy_input" type="text" class="form-control wm" id="last_fy_input" required placeholder="YYYY-MM-DD">
-              </div>
+            <br><p>Balance sheet</p>
+            {{show_bs_output.render|safe}}
+      </div>
+      <div class="tab-pane fade show active" id="nav-inputs" role="tabpanel" aria-labelledby="nav-inputs-tab">
+            <form action="{% url 'input' %}" method="POST" style="margin-bottom: 75px;" id="finance_app_input_form">
+            {% csrf_token %}
 
-              <div class="form-group col-md-4">
-                <label for="no_years_input">Number of Years</label>
-                <select name="no_years_input" class="form-control" id="no_years_input" >
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
-                </select>
-              </div>
-        </div>
+            <h2>Date Assumptions</h2>
+                <div class="row">
+                      <div class="form-group col-md-4">
+                        <label for="acq_close_input">Acquisition Close Date</label>
+                        <input name="acq_close_input" type="text" class="form-control" id="acq_close_input" required placeholder="YYYY-MM-DD">
+                      </div>
 
-        <h2>Valuation Assumptions</h2>
-        <div class="row">
-              <div class="form-group col-md-4">
-                <label for="entry_mult_input">Entry Multiple</label>
-                <input name="entry_mult_input" type="number" step="0.0001" class="form-control" id="entry_mult_input" required>
-              </div>
+                      <div class="form-group col-md-4">
+                        <label for="last_fy_input">Last FY Date</label>
+                        <input name="last_fy_input" type="text" class="form-control wm" id="last_fy_input" required placeholder="YYYY-MM-DD">
+                      </div>
 
-              <div class="form-group col-md-4">
-                <label for="entry_ebitda">Entry EBITDA</label>
-                <input name="entry_ebitda" type="number" step="0.0001" class="form-control wm" id="entry_ebitda" required>
-              </div>
-
-              <div class="form-group col-md-4">
-                <label for="exit_mult_input">Exit Multiple</label>
-                <input name="exit_mult_input" type="number" step="0.0001" class="form-control wm" id="exit_mult_input" required>
-              </div>
-        </div>
-
-    <h2>Income Statement</h2>
-
-        <!--<h3>Depreciation:</h3>-->
-        <div class="row">
-            <div class="form-group col-md-4">
-              <label for="deprec_perc_rev_input">Depreciation</label>
-              <input name="deprec_perc_rev_input" type="number" step="0.0001" class="form-control wm" id="deprec_perc_rev_input" required>
-            </div>
-        </div>
-
-            <h3>Revenue:</h3>
-            <div id="Revenue" class="DOY ">
-            </div>
-
-            <h3>COGS:</h3>
-            <div id="COGS" class="DOY ">
-            </div>
-
-            <h3>Operating Expenses:</h3>
-            <div id="Operating_Expenses" class="DOY ">
-            </div>
-
-            <h3>Capex:</h3>
-            <div id="Capex" class="DOY ">
-            </div>
-
-
-        <!--<h2>Cash Flow</h2>-->
-        <div class="row">
-              <div class="form-group col-md-4">
-                <label for="changenwc_perc_rev_input">Change NWC</label>
-                <input name="changenwc_perc_rev_input" type="number"  step="0.0001" class="form-control" id="changenwc_perc_rev_input" required>
-              </div>
-        </div>
-
-
-        <h2>Debt Assumptions</h2>
-            <div class="row">
-                  <div class="form-group col-md-4">
-                    <label for="leverage_ebitda">Leverage Multiple</label>
-                    <input name="leverage_ebitda" type="number" step="0.0001" class="form-control" id="leverage_ebitda" required>
-                  </div>
-
-                  <div class="form-group col-md-4">
-                    <label for="interest_rate_input">Interest Rate</label>
-                    <input name="interest_rate_input" type="number" step="0.0001" class="form-control" id="interest_rate_input" required>
-                  </div>
-
-                  <div class="form-group col-md-4">
-                    <label for="start_revolver_input">Revolver Size</label>
-                    <input name="start_revolver_input" type="number" step="0.0001" class="form-control" id="start_revolver_input" required>
-                  </div>
-            </div>
-
-    <h2>Amortisation(%)</h2>
-        <div id="amort_sched_input" class="DOY ">
-        </div>
-
-    <!--<h2>Balance Sheet</h2>-->
-        <div class="row">
-            <div class="form-group col-md-4">
-                <div class="form-group">
-                    <label for="start_cash_input">Start Cash</label>
-                    <input name="start_cash_input" type="number" step="0.0001" class="form-control" id="start_cash_input" required>
+                      <div class="form-group col-md-4">
+                        <label for="no_years_input">Number of Years</label>
+                        <select name="no_years_input" class="form-control" id="no_years_input" >
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                          <option value="6">6</option>
+                        </select>
+                      </div>
                 </div>
-            </div>
-        </div>
+
+                <h2>Valuation Assumptions</h2>
+                <div class="row">
+                      <div class="form-group col-md-4">
+                        <label for="entry_mult_input">Entry Multiple</label>
+                        <input name="entry_mult_input" type="number" step="0.0001" class="form-control" id="entry_mult_input" required>
+                      </div>
+
+                      <div class="form-group col-md-4">
+                        <label for="entry_ebitda">Entry EBITDA</label>
+                        <input name="entry_ebitda" type="number" step="0.0001" class="form-control wm" id="entry_ebitda" required>
+                      </div>
+
+                      <div class="form-group col-md-4">
+                        <label for="exit_mult_input">Exit Multiple</label>
+                        <input name="exit_mult_input" type="number" step="0.0001" class="form-control wm" id="exit_mult_input" required>
+                      </div>
+                </div>
+
+            <h2>Income Statement</h2>
+
+                <!--<h3>Depreciation:</h3>-->
+                <div class="row">
+                    <div class="form-group col-md-4">
+                      <label for="deprec_perc_rev_input">Depreciation</label>
+                      <input name="deprec_perc_rev_input" type="number" step="0.0001" class="form-control wm" id="deprec_perc_rev_input" required>
+                    </div>
+                </div>
+
+                    <h3>Revenue:</h3>
+                    <div id="Revenue" class="DOY ">
+                    </div>
+
+                    <h3>COGS:</h3>
+                    <div id="COGS" class="DOY ">
+                    </div>
+
+                    <h3>Operating Expenses:</h3>
+                    <div id="Operating_Expenses" class="DOY ">
+                    </div>
+
+                    <h3>Capex:</h3>
+                    <div id="Capex" class="DOY ">
+                    </div>
 
 
-      <button type="submit" class="btn btn-primary wm">Submit</button>
-    </form>
+                <!--<h2>Cash Flow</h2>-->
+                <div class="row">
+                      <div class="form-group col-md-4">
+                        <label for="changenwc_perc_rev_input">Change NWC</label>
+                        <input name="changenwc_perc_rev_input" type="number"  step="0.0001" class="form-control" id="changenwc_perc_rev_input" required>
+                      </div>
+                </div>
 
 
+                <h2>Debt Assumptions</h2>
+                    <div class="row">
+                          <div class="form-group col-md-4">
+                            <label for="leverage_ebitda">Leverage Multiple</label>
+                            <input name="leverage_ebitda" type="number" step="0.0001" class="form-control" id="leverage_ebitda" required>
+                          </div>
+
+                          <div class="form-group col-md-4">
+                            <label for="interest_rate_input">Interest Rate</label>
+                            <input name="interest_rate_input" type="number" step="0.0001" class="form-control" id="interest_rate_input" required>
+                          </div>
+
+                          <div class="form-group col-md-4">
+                            <label for="start_revolver_input">Revolver Size</label>
+                            <input name="start_revolver_input" type="number" step="0.0001" class="form-control" id="start_revolver_input" required>
+                          </div>
+                    </div>
+
+            <h2>Amortisation(%)</h2>
+                <div id="amort_sched_input" class="DOY ">
+                </div>
+
+            <!--<h2>Balance Sheet</h2>-->
+                <div class="row">
+                    <div class="form-group col-md-4">
+                        <div class="form-group">
+                            <label for="start_cash_input">Start Cash</label>
+                            <input name="start_cash_input" type="number" step="0.0001" class="form-control" id="start_cash_input" required>
+                        </div>
+                    </div>
+                </div>
+
+
+              <button type="submit" class="btn btn-primary wm">Submit</button>
+            </form>
+      </div>
+    </div>
 </div>
 
     <!-- Optional JavaScript -->
@@ -171,6 +196,26 @@
     <script src="{% static 'cleave.min.js' %}"></script>
     <script>
 
+        let default_data = {
+            'number_years_input': 5,
+            'acq_close_input': '2018-06-30',
+            'last_fy_input': '2018-06-30',
+            'no_years_input': "5",
+            'entry_mult_input': 9,
+            'entry_ebitda': 15,
+            'exit_mult_input': 9,
+            'changenwc_perc_rev_input': 0.04,
+            'leverage_ebitda': 4,
+            'interest_rate_input': 0.045,
+            'start_revolver_input': 75,
+            'start_cash_input': 50,
+            'deprec_perc_rev_input': 0.04,
+            'revenue_input': [100.00,120.00,150.00,170.00,200.00],
+            'cogs_input': [20.00,22.00,25.00,30.00,32.00],
+            'opex_input': [50.00,50.00,60.00,65.00,70.00],
+            'capex_input': [20.00,20.00,20.00,20.00,20.00],
+            'amort_sched_input': [0.2,0.2,0.2,0.2,0.2],
+        };
 
         var date1 =  new Cleave('#acq_close_input', {
             date: true,
@@ -187,14 +232,39 @@
         var number_of_years = 5;
 
 
+        {% if is_output %}
+            $('#nav-outputs-tab').tab('show')
+            set_input_value(JSON.parse(sessionStorage.getItem('fa_input_form')));
+        {% else %}
+            set_input_value(default_data);
+        {% endif %}
+
+        console.log(JSON.parse(sessionStorage.getItem('fa_input_form')));
+
+        const $inputForm = $('#finance_app_input_form');
+        $inputForm.on('submit', function (e) {
+            e.preventDefault();
+
+            var unindexed_array = $inputForm.serializeArray();
+            var data = {};
+            $.map(unindexed_array, function (n, i) {
+                data[n['name']] = n['value'];
+            });
+            delete data['csrfmiddlewaretoken'];
+            sessionStorage.setItem('fa_input_form', JSON.stringify(data));
+            this.submit();
+        });
+
+
         $('#no_years_input').on('change', function() {
             $( ".DOY" ).html("");
             number_of_years = parseInt(this.value);
             set_number_years_input(number_of_years);
         });
 
-        set_number_years_input(5);
-        set_default_value();
+
+        //legacy version. New: set_input_value(default_data);
+        //set_default_value();
 
 
         function set_default_value() {
@@ -233,6 +303,23 @@
             };
         };
 
+        function set_input_value(input_data) {
+            var no_years = input_data['no_years_input'];
+            set_number_years_input(no_years);
+
+            Object.keys(input_data).forEach(function(key) {
+                if (typeof input_data[key] === 'string' || typeof input_data[key] === 'number' ){
+                    $('#' + key).val(input_data[key]);
+                }
+                if (typeof input_data[key] === 'object' && !isNaN(parseInt(no_years)) ){
+                    for (i = 1; i<=parseInt(no_years); i++)
+                    {
+                        var input_id = key + '_year_' + i;
+                        $('#' + input_id).val(input_data[key][i-1]);
+                    };
+                }
+            });
+        };
 
         function set_number_years_input(n) {
 

@@ -12,7 +12,14 @@ class InputDataView(View):
         data = parse_data(request.POST)
         client = LBO_Model('abc', data)
         client.show_output()
-        return render(request, 'input.html', {})
+        context = {'is_output': True,
+                   'show_entry': client.show_entry(),
+                   'show_val_output': client.show_val_output(),
+                   'show_irr': client.show_irr(),
+                   'show_model': client.show_model(),
+                   'show_bs_output': client.show_bs_output(),
+                   }
+        return render(request, 'input.html', context)
 
 def parse_data(post):
     result = {}
