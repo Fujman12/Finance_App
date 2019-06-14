@@ -48,21 +48,23 @@
     </nav>
     <div class="tab-content" id="nav-tabContent">
       <div class="tab-pane fade" id="nav-outputs" role="tabpanel" aria-labelledby="nav-outputs-tab">
-            <br><p>Entry price</p>
+            <br><h3>Entry price</h3>
             {{show_entry.render|safe}}
 
-            <br><p>Valuation output</p>
+            <br><h3>Valuation output</h3>
             {{show_val_output.render|safe}}
 
-            <br><p>IRR output</p>
+            <br><h3>IRR output</h3>
             {{show_irr.render|safe}}
+          <br>
       </div>
       <div class="tab-pane fade" id="nav-model" role="tabpanel" aria-labelledby="nav-model-tab">
-            <br><p>Cash flow model</p>
+            <br><h3>Cash flow model</h3>
             {{show_model.render|safe}}
 
-            <br><p>Balance sheet</p>
+            <br><h3>Balance sheet</h3>
             {{show_bs_output.render|safe}}
+          <br>
       </div>
       <div class="tab-pane fade show active" id="nav-inputs" role="tabpanel" aria-labelledby="nav-inputs-tab">
             <form action="{% url 'input' %}" method="POST" style="margin-bottom: 75px;" id="finance_app_input_form">
