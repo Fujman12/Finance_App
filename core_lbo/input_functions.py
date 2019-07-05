@@ -140,6 +140,7 @@ class transfered_input_data(object):
         self.exit_mult_output = data_obj.exit_mult_input + data_obj.exit_mult_add
 
         self.purchase_ebitda_output = data_obj.purchase_ebitda_input
+        self.leverage_ebitda_output = data_obj.leverage_ebitda
 
 
 
