@@ -95,6 +95,8 @@ class LBO_Model:
 
         dt_interval = 3
 
+        no_per = 12 / dt_interval
+
         dates = [f"{dt:%d-%b-%Y}" for dt in rrule(MONTHLY,
                                     interval=dt_interval,
                                     bymonthday=-1,
@@ -188,7 +190,7 @@ class LBO_Model:
 
                 capex_dict[key] = capex_input[counter] / (12/dt_interval)
                 changenwc_dict[key] = changenwc_perc_rev_input * revenue_dict[key]
-                debt_amort_dict[key] = ( amort_sched_input[counter] * start_debt ) / (12/dt_interval)
+                debt_amort_dict[key] = ( amort_sched_input[counter] ) / (12/dt_interval)
                 debt_sched_dict[key] = debt_sched_dict[key1] - debt_amort_dict[key]
                 # note here on interest, as this is a periodic model
                 # debt gets drawn in the period it is needed (key1 - previous period)
@@ -360,17 +362,17 @@ class LBO_Model:
             value = 0
             entry_equity_dict[key] = value
 
-        entry_equity_dict[start_year] = entry_equity
+        entry_equity_dict[years_dict['Year0']] = entry_equity
 
         valuation_dict = {}
         for x in range(0,len(dates_ann)):
             key = 'Year'+str(x)
-            value = entry_ebitda * exit_mult_input
+            value = ebitda_ann_dict[key] * exit_mult_input
             if x == 0:
-                if calendarisation_perc == 0:
-                    valuation_dict[key] = value
-                else:
-                    valuation_dict[key] = value / calendarisation_perc
+#                if calendarisation_perc == 0:
+                 valuation_dict[key] = purchase_price
+#                else:
+#                    valuation_dict[key] = value / calendarisation_perc
             else:
                 valuation_dict[key] = value
 
@@ -378,12 +380,12 @@ class LBO_Model:
         equity_value_dict = {}
         for x in range(0,len(dates_ann)):
             key = 'Year'+str(x)
-            equity_value_dict[key] = valuation_dict[key] - debt_sched_ann_dict[key] + cash_ann_dict[key]
+            equity_value_dict[key] = valuation_dict[key] - debt_sched_ann_dict[key] - revolver_drawn_ann_dict[key] + cash_ann_dict[key]
 
         net_debt_dict = {}
         for x in range(0,len(dates_ann)):
             key = 'Year'+str(x)
-            net_debt_dict[key] = debt_sched_ann_dict[key] - cash_ann_dict[key]
+            net_debt_dict[key] = debt_sched_ann_dict[key] + revolver_drawn_ann_dict[key] - cash_ann_dict[key]
 
 
         irr_dict = {}
@@ -556,14 +558,14 @@ class LBO_Model:
         self.irr_output = pd.DataFrame(index=irr_names,
                                             data=irr_data)
     def show_output(self):
-        print(self.fin_ann_model)
+        print(self.cashflow_ann_model)
 
     def show_irr(self):
         irr_out = self.irr_output.style
         return irr_out
 
     def show_model(self):
-        model_out = self.fin_ann_model
+        model_out = self.cashflow_ann_model
 
         return_mod = model_out.style
         return return_mod
@@ -580,7 +582,7 @@ class LBO_Model:
         val_out = self.val_output.style
         return val_out
 
-print(amort_sched_dict)
+#print(amort_sched_dict)
 #Styling
 
 #irr_styled = irr_output.style.set_properties(subset=[Years_Dict['Year0']], **{'width': '300px'})
