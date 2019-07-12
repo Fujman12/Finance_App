@@ -571,7 +571,7 @@ class LBO_Model:
         return return_mod
 
     def show_bs_output(self):
-        bs_out = self.balance_sheet_ann_model.style
+        bs_out = self.balance_sheet_ann_model.style.format({'Year0':"{:.2}"})
         return bs_out
 
     def show_entry(self):
