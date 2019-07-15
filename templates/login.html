@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign up</title>
+
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+
+
+</head>
+<body>
+
+
+
+
+
+
+
+
+<div class="container">
+	<div class="row justify-content-center">
+		<div class="col-md-6">
+			<div class="card">
+
+			<header class="card-header">
+				<a href="{% url 'input' %}" class="float-right btn btn-outline-primary mt-1" style="margin-left: 10px;">Home</a>
+				<a href="{% url 'signup' %}" class="float-right btn btn-outline-primary mt-1">Sign up</a>
+				<h4 class="card-title mt-2"> Sign in</h4>
+			</header>
+
+
+			<article class="card-body">
+
+
+            <form method="POST" class="form-signin">
+              {% csrf_token %}
+              <div class="form-group">
+                <label for="id_username">Username:</label>
+                <input name="username" type="text" id="id_username" class="form-control" placeholder="Login" required autofocus>
+              </div>
+
+              <div class="form-group">
+                <label for="inputPassword">Password:</label>
+                <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+              </div>
+
+              <div class="form-group">
+                  <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+              </div>
+            </form>
+
+            {% for message in messages %}
+                <div class="alert alert-danger">
+                    <a class="close" href="#" data-dismiss="alert">×</a>
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+			</article>
+			<div class="border-top card-body text-center"><a href="{% url 'signup' %}">Have not yet registered? </a></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+</body>
+</html>
+
+

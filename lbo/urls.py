@@ -15,9 +15,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from app.views import InputDataView
+from app.views import InputDataView, signup, signin, logout_request, save_inputDB, update_inputDB, load_inputDB,\
+    delete_inputDB, load_inputDB_list
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", InputDataView.as_view(), name="input",)
+    path("", InputDataView.as_view(), name="input",),
+    path('signup/', signup, name='signup'),
+    path('signin/', signin, name='signin'),
+    path('logout/', logout_request, name='logout'),
+    path('save/', save_inputDB, name='save_inputDB'),
+    path('update/', update_inputDB, name='update_inputDB'),
+    path('load-item/', load_inputDB, name='load_inputDB'),
+    path('load-list/', load_inputDB_list, name='load_inputDB_list'),
+    path('delete/', delete_inputDB, name='delete_inputDB'),
 ]
