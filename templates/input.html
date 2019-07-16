@@ -25,6 +25,41 @@
             margin: 0 3px 16px 0;
         }
     </style>
+
+
+    <style type="text/css">
+        .typeahead, .tt-query, .tt-hint {
+            width: 200px;
+        }
+        .tt-query {
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+        }
+        .tt-hint {
+            color: #999999;
+        }
+        .tt-menu {
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            margin-top: 12px;
+            padding: 8px 0;
+        }
+        .tt-suggestion {
+            font-size: 16px;  /* Set suggestion dropdown font size */
+            padding: 3px 20px;
+            width: 200px;
+        }
+        .tt-suggestion:hover {
+            cursor: pointer;
+            background-color: #0097CF;
+            color: #FFFFFF;
+        }
+        .tt-suggestion p {
+            margin: 0;
+        }
+    </style>
+
+
   </head>
   <body>
 
@@ -194,31 +229,33 @@
 
 
                 <div class="row">
-                    <div class="col-lg-4 col-xs-4">
-                      <button type="submit" class="btn btn-primary wm">Calculate</button>
+                    <div class="col-sm-3">
+                      <button type="submit" class="btn btn-primary wm" style="margin-bottom: 15px;">Calculate</button>
                     </div>
 
 
-                    <div class="col-lg-8 col-xs-8">
-                        <div class="float-right form-inline">
-                            <div class="input-group">
-                                <input name="input_item_title" type="text" id="id_input_item_title" class="form-control" placeholder="Type title">
-                                <button class="btn btn-success" id="button-save" style="margin-right: 20px;">Save new</button>
-                            </div>
+                    <div class="col-sm-9">
+                            <div class="form-inline">
+                                <div class="input-group">
+                                    <div id="div_contains_model_select">
+                                        <input id="id_input_item_title" type="text" class="typeahead tt-query form-control" autocomplete="off" spellcheck="false" placeholder="Model name">
+                                    </div>
+                                        <!--<input name="input_item_title" type="text" id="id_input_item_title" class="form-control" placeholder="Type title">-->
+                                        <button class="btn btn-success" id="button-save" style="margin-left: 10px;">Save As</button>
+                                </div>
 
-                            {% if user.is_authenticated %}
-                            <div class="input-group">
-                              <select name="InputDB" class="custom-select" id="IdInputDB">
-                                <option selected value="-1">Choose Saved Model</option>
-                                  {% for inputDBItem in inputDBList %}
-                                        <option value="{{ inputDBItem.id }}">{{inputDBItem.title}}</option>
-                                  {% endfor %}
-                              </select>
-                                <button class="btn btn-warning" id="button-update">Update existing</button>
+                                {% if user.is_authenticated %}
+                                <!--<div class="input-group">-->
+                                  <!--<select name="InputDB" class="custom-select" id="IdInputDB">-->
+                                    <!--<option selected value="-1">Choose Saved Model</option>-->
+                                      {% for inputDBItem in inputDBList %}
+                                            <!--<option value="{{ inputDBItem.id }}">{{inputDBItem.title}}</option>-->
+                                      {% endfor %}
+                                  <!--</select>-->
+                                    <!--<button class="btn btn-warning" id="button-update">Update existing</button>-->
+                                <!--</div>-->
+                                {% endif %}
                             </div>
-                            {% endif %}
-
-                        </div>
                     </div>
                 </div>
 
@@ -266,8 +303,66 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
 
+
+    <script src="https://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js" crossorigin="anonymous"></script>
+
+
     <script src="{% static 'cleave.min.js' %}"></script>
     <script>
+
+        //for search models in select
+        var substringMatcher = function(strs) {
+          return function findMatches(q, cb) {
+            var matches, substringRegex;
+            matches = [];
+
+            substrRegex = new RegExp(q, 'i');
+
+            $.each(strs, function(i, str) {
+              if (substrRegex.test(str)) {
+                matches.push(str);
+              }
+            });
+
+            cb(matches);
+          };
+        };
+
+
+        var user_models = {}; //{'model_title': id, ...}
+            {% if user.is_authenticated %}
+                  {% for inputDBItem in inputDBList %}
+                        user_models["{{inputDBItem.title}}"] = {{ inputDBItem.id }};
+                  {% endfor %}
+            {% endif %}
+
+        var user_model_array = Object.keys(user_models);
+
+
+
+
+        function updateModelsInSelect(){
+            var typeahead_select = '<input id="id_input_item_title" type="text" class="typeahead tt-query form-control" autocomplete="off" spellcheck="false" placeholder="Model name">'
+
+            $('#div_contains_model_select').html("");
+            $('#div_contains_model_select').html( typeahead_select );
+
+            $('.typeahead').typeahead({
+              hint: true,
+              highlight: true,
+              minLength: 0
+            },
+            {
+              limit: 1500,
+              name: 'user_model_array',
+              source: substringMatcher(user_model_array)
+            });
+        };
+
+        updateModelsInSelect();
+
+
+
 
         let default_data = {
             'number_years_input': 5,
@@ -509,7 +604,8 @@
 
                     //open tab 'Inputs'
                     $('.nav-tabs a[href="#nav-inputs"]').tab('show');
-
+                    //set default id_input_item_title text
+                    $('#id_input_item_title')[0].value = data.title;
 
                     //add message success
                     var message = 'Item ' + '<strong>' + data.title + '</strong>' + ' successfully loaded';
@@ -542,8 +638,99 @@
 
 
         $( "#button-save" ).click(function(event) {
-            saveInputItem(event);
+            //saveInputItem(event); //legacy version for save in case functionality for update exist
+            saveOrUpdateInputItem(event); //new version
         });
+
+        function saveOrUpdateInputItem(event) {
+            event.preventDefault();
+
+        {% if user.is_authenticated %}
+
+            var input_title = $('#id_input_item_title')[0].value;
+            var model_id = user_models[input_title] || '';
+
+            if (input_title != '')
+            {
+                //prepare to save
+                var unindexed_array = $inputForm.serializeArray();
+                var data = {};
+                $.map(unindexed_array, function (n, i) {
+                    data[n['name']] = n['value'];
+                });
+                delete data['csrfmiddlewaretoken'];
+                delete data['input_item_title'];
+                delete data['IdInputDB'];
+
+                var json_data = JSON.stringify(data);
+                sessionStorage.setItem('fa_input_form', json_data);
+                //end prepare to save
+
+                if(model_id != '')
+                {
+                    //update by id
+                    if ($('#IdInputDB').val() != '-1')
+                    {
+                        $.ajax({
+                        url: '{% url "update_inputDB" %}',
+                        data: {
+                          'data': json_data,
+                          'id': model_id
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.status == 'ok')
+                            {
+                                //add message success
+                                var message = 'Item ' + '<strong>' + data.title + '</strong>' +' successfully updated';
+                                addAlertMessage('success', message);
+                            }else{
+                                addAlertMessage('danger', data.error);
+                            }
+                        }
+                        });
+                    }else{
+                        var message = 'Model not chosen';
+                        addAlertMessage('danger', message);
+                    }
+                    //end update by id
+                }else{
+                    //save new
+                    $.ajax({
+                    url: '{% url "save_inputDB" %}',
+                    data: {
+                      'data': json_data,
+                      'title': input_title
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.status == 'ok')
+                        {
+                            //update option list in select
+                            user_models[data.title] = data.id;
+                            user_model_array = Object.keys(user_models);
+                            updateModelsInSelect();
+                            $('#id_input_item_title')[0].value = data.title;
+
+                            //add message success
+                            var message = 'Item ' + '<strong>' + data.title + '</strong>' + ' successfully created';
+                            addAlertMessage('success', message);
+                        }else{
+                            addAlertMessage('danger', data.error);
+                        }
+                    }
+                    });
+                    //end save new
+                }
+            }else{
+                var message = 'Model title is empty';
+                addAlertMessage('danger', message);
+            }
+        {% else %}
+              addAlertMessage('danger', 'Please login to save model');
+        {% endif %}
+        }
+
 
         function saveInputItem(event) {
             event.preventDefault();
