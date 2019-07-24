@@ -20,6 +20,7 @@ class InputDataView(View):
         data = parse_data(request.POST)
         client = LBO_Model('abc', data)
         client.show_output()
+        inputDBList = []
         if request.user.is_authenticated:
             inputDBList = inputDB.objects.filter(user=request.user)
         context = {'is_output': True,
